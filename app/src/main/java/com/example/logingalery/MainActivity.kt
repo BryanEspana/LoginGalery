@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = Color(R.color.principal_color)
+                    color = Color(0xFFEBEBEB)
                 ) {
                     LoginPage()
                 }
