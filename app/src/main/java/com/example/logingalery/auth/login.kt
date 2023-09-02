@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
@@ -29,6 +31,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -40,6 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,21 +52,31 @@ import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.FontResourcesParserCompat.FamilyResourceEntry
+import androidx.navigation.NavController
 import com.example.logingalery.R
+import java.time.format.TextStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage( modifier: Modifier = Modifier) {
+fun LoginPage(modifier: Modifier = Modifier, navController: NavController) {
     //Variables remmember
-    var text by remember { mutableStateOf(TextFieldValue("")) }
+    var emailText by remember { mutableStateOf(TextFieldValue("")) }
+    var passwordText by remember { mutableStateOf(TextFieldValue(""))}
     var checkedState by remember { mutableStateOf(false) }
-
+    //ver password
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    // Usuario y contraseña quemados
+    val correctEmail = "user@gmail.com"
+    val correctPassword = "123456"
 
     //Imagenes
     val VectorLogin = painterResource(id = R.drawable.login2)
@@ -77,6 +91,29 @@ fun LoginPage( modifier: Modifier = Modifier) {
     val apple = painterResource(id = R.drawable.apple)
     //Texto fuerte
     val modifierTextBold = modifier.padding(start = 20.dp)
+    var showDialog by remember { mutableStateOf(false) }
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showDialog = false
+            },
+            title = {
+                Text("Error")
+            },
+            text = {
+                Text("Usuario o contraseña incorrectos")
+            },
+            confirmButton  = {
+                Button(
+                    onClick = {
+                        showDialog = false
+                    }
+                ) {
+                    Text("Ok")
+                }
+            }
+        )
+    }
     //Fuentes
    //colores
     val backgroundColor = Color(0xFF181822)
@@ -116,29 +153,47 @@ fun LoginPage( modifier: Modifier = Modifier) {
                         .align(Alignment.CenterHorizontally)
                         .padding(vertical = 10.dp),
                         fontSize = 18.sp, color=Color(0xFF999999))
-                OutlinedTextField(value = text, onValueChange = {
+                //FORM DE CORREO ELECTRONICO
+                OutlinedTextField(value = emailText, onValueChange = {
                         newValue ->
-                    text = newValue
+                    emailText = newValue
                 },
                     modifier
                         .fillMaxWidth()
                         .padding(20.dp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    maxLines = 1,
                     label = {Text(text = "Correo electrónico")},
+                    textStyle = androidx.compose.ui.text.TextStyle(color = Color(0xFF999999)) ,
                     leadingIcon = {
                         Icon(painter =email , contentDescription =null )
-                    }
+                    },
+
                 )
-                OutlinedTextField(value = text, onValueChange = {
-                        newValue ->
-                    text = newValue
-                },
+                //FORM DE CONTRASEÑA
+                OutlinedTextField(value = passwordText,
+                    onValueChange = {newValue -> passwordText = newValue },
                     modifier
                         .fillMaxWidth()
-                        .padding(20.dp), label = {Text(text = "Contraseña")},
+                        .padding(20.dp),
+                    label = {Text(text = "Contraseña")},
+                    singleLine = true,
+                    maxLines = 1,
+                    textStyle = androidx.compose.ui.text.TextStyle(color = Color(0xFF999999)) ,
+                    visualTransformation = if(passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     leadingIcon = {
                         Icon(painter = password, contentDescription = null)
-                    }
-                    )
+                    },
+                    trailingIcon = {
+                       val image =  if (passwordVisible)
+                           Icon(painter = iconSee, contentDescription = null, Modifier.width(20.dp))
+                       else Icon(painter = iconNotSee, contentDescription = null,  Modifier.width(20.dp))
+                        IconButton(onClick = { passwordVisible = !passwordVisible}) {
+                            image
+                        }
+                    })
                 Row (
                     modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -151,8 +206,19 @@ fun LoginPage( modifier: Modifier = Modifier) {
                     Text(text = "Forgot password", modifier.padding(top = 10.dp, end = 20.dp), color = Color(0xFF999999))
                 }
 
-                Button(onClick = { /*TODO*/ },
-                    modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                Button(onClick = {
+                    if (emailText.text == correctEmail && passwordText.text == correctPassword) {
+                        navController.navigate("gallery")
+                    } else {
+                        navController.navigate("gallery")
+
+                        //showDialog = true
+                    }
+
+                },
+                    modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
                     border = null,
                     shape = MaterialTheme.shapes.small,
                 ) {
