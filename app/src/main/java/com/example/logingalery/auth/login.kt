@@ -1,7 +1,10 @@
 package com.example.logingalery.auth
 
+import android.widget.CheckBox
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,12 +15,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -47,106 +60,161 @@ import com.example.logingalery.R
 fun LoginPage( modifier: Modifier = Modifier) {
     //Variables remmember
     var text by remember { mutableStateOf(TextFieldValue("")) }
+    var checkedState by remember { mutableStateOf(false) }
+
 
     //Imagenes
     val VectorLogin = painterResource(id = R.drawable.login2)
     val logo = painterResource(id = R.drawable.logo)
+
+    //Iconos
+    val email = painterResource(id = R.drawable.baseline_mail_outline_24)
+    val password = painterResource(id = R.drawable.baseline_lock_24)
+    val iconSee = painterResource(id = R.drawable.eye_solid)
+    val iconNotSee = painterResource(id = R.drawable.eye_slash_solid)
     val google = painterResource(id = R.drawable.google)
-    val facebook = painterResource(id = R.drawable.facebook_f)
-    val twitter = painterResource(id = R.drawable.x_twitter)
+    val apple = painterResource(id = R.drawable.apple)
     //Texto fuerte
     val modifierTextBold = modifier.padding(start = 20.dp)
     //Fuentes
-   // val font = FontFamily(Font(R.font.lexend_mega))
+   //colores
+    val backgroundColor = Color(0xFF181822)
     Surface (
         Modifier
-            .fillMaxSize()
-            .background(Color(0xFFf6f6f6)),
-        color = Color(0xFF040b26)
+            .fillMaxSize(),color = backgroundColor
     ) {
-        Column( modifier.fillMaxWidth()) {
+        Column(
+            modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())) {
             Column (
                 modifier
-                    .padding(vertical = 50.dp)
-                    .align(Alignment.CenterHorizontally)) {
+                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .background(color = Color(0xFF020818)),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(text = "LOGIN TO", modifier.align(Alignment.CenterHorizontally),
-                    fontSize = 35.sp, color=Color.White, textAlign = TextAlign.Center
+                    fontSize = 35.sp, color=Color.White, textAlign = TextAlign.Center, fontFamily = FontFamily.SansSerif
 
                 )
                 Text(text = "YOUR ACCOUNT", modifier.align(Alignment.CenterHorizontally),
                     fontSize = 35.sp, color=Color.White, textAlign = TextAlign.Center,
                 )
             }
+            Divider( color = Color(0xFF494949))
             Column (
-                Modifier.background(color = Color(0xFF08215e))
+                Modifier
+                    .background(color = Color(0xFF181822))
                     .padding(vertical = 20.dp)
             ) {
                 Text(text = "Enter your login information",
-                    modifier.align(Alignment.CenterHorizontally),
-                    fontSize = 18.sp, color=Color(0xFF243156))
-                OutlinedTextField(value = text, onValueChange = {},
+                    modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(vertical = 10.dp),
+                        fontSize = 18.sp, color=Color(0xFF999999))
+                OutlinedTextField(value = text, onValueChange = {
+                        newValue ->
+                    text = newValue
+                },
                     modifier
                         .fillMaxWidth()
-                        .padding(20.dp), label = {Text(text = "Correo electrónico")},
+                        .padding(20.dp),
+                    label = {Text(text = "Correo electrónico")},
+                    leadingIcon = {
+                        Icon(painter =email , contentDescription =null )
+                    }
                 )
-                OutlinedTextField(value = text, onValueChange = {},
+                OutlinedTextField(value = text, onValueChange = {
+                        newValue ->
+                    text = newValue
+                },
                     modifier
                         .fillMaxWidth()
-                        .padding(20.dp), label = {Text(text = "Contraseña")})
-                Button(onClick = { /*TODO*/ } ,
-                    modifier
-                        .fillMaxWidth()
-                        .padding(20.dp)) {
+                        .padding(20.dp), label = {Text(text = "Contraseña")},
+                    leadingIcon = {
+                        Icon(painter = password, contentDescription = null)
+                    }
+                    )
+                Row (
+                    modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ){
+                    Row (modifier.padding(start = 10.dp)){
+                        Checkbox(checked = checkedState,
+                            onCheckedChange ={isChecked -> checkedState = isChecked},)
+                        Text(text = "Remember me",modifier.padding(top = 10.dp), color = Color(0xFF999999), )
+                    }
+                    Text(text = "Forgot password", modifier.padding(top = 10.dp, end = 20.dp), color = Color(0xFF999999))
+                }
+
+                Button(onClick = { /*TODO*/ },
+                    modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                    border = null,
+                    shape = MaterialTheme.shapes.small,
+                ) {
                     Text(text = "Ingresar")
                 }
 
             }
 
-            Text(text = "- o inicia sesión con -",
-                modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(10.dp))
+            Row {
+                Divider( color = Color(0xFF494949))
+            }
+
 
             Row( modifier.align(Alignment.CenterHorizontally)) {
                 Card(
-                    modifier
-                        .width(100.dp)
-                        .height(40.dp)
-                        .padding(horizontal = 10.dp)) {
-                    Image(painter = google, contentDescription = null,
-                        modifier
-                            .width(25.dp)
-                            .align(Alignment.CenterHorizontally)
-                            .padding(top = 5.dp))
+                    modifier = Modifier
+                        .width(150.dp)
+                        .height(70.dp)
+                        .padding(10.dp)
+                        .align(Alignment.CenterVertically),
+                    colors = CardDefaults.cardColors(Color(0xFF1e222b))
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = google, // Cambia esto a tu recurso de imagen
+                            contentDescription = null,
+                            modifier = Modifier.size(25.dp)
+                        )
+                    }
                 }
-                Card (
-                    modifier
-                        .width(100.dp)
-                        .height(40.dp)
-                        .padding(horizontal = 10.dp)){
-                    Image(painter = facebook, contentDescription = null,
-                        modifier
-                            .width(15.dp)
-                            .align(Alignment.CenterHorizontally)
-                            .padding(top = 5.dp))
-                }
+
                 Card(
-                    modifier
-                        .width(100.dp)
-                        .height(40.dp)
-                        .padding(horizontal = 10.dp)) {
-                    Image(painter = twitter, contentDescription = null,
-                        modifier
-                            .width(25.dp)
-                            .align(Alignment.CenterHorizontally)
-                            .padding(top = 5.dp))
+                    modifier = Modifier
+                        .width(150.dp)
+                        .height(70.dp)
+                        .padding(10.dp)
+                        .align(Alignment.CenterVertically),
+                    colors = CardDefaults.cardColors(Color(0xFF1e222b))
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = apple, // Cambia esto a tu recurso de imagen
+                            contentDescription = null,
+                            modifier = Modifier.size(25.dp)
+                        )
+                    }
                 }
+
 
             }
             Column(
                 modifier
                     .fillMaxHeight()
-                    .align(Alignment.CenterHorizontally)) {
+                    .align(Alignment.CenterHorizontally)
+                    .padding(vertical = 10.dp)
+
+            ) {
                 Text(text = "¿No tienes cuenta aun? Registrate ", modifier.align(Alignment.CenterHorizontally), color = Color.White)
             }
         }
