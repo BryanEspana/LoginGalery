@@ -31,7 +31,9 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(navController, startDestination = "login") {
                         composable("login") { LoginPage(navController = navController) }
-                        composable("gallery") { GaleryPage() }
+                        composable("gallery") {
+                            GaleryPage(navController)
+                        }
                     }                }
             }
         }
