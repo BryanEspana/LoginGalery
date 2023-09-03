@@ -1,5 +1,6 @@
 package com.example.logingalery.auth
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +39,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
@@ -49,6 +52,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.logingalery.R
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -193,6 +198,7 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController) {
                             popUpTo("login") { inclusive = true }
                         }
                     } else {
+
                         showDialog = true
                     }
 

@@ -3,6 +3,7 @@ package com.example.logingalery.galery
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,10 +38,15 @@ import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
+
 sealed class MyImage {
     data class Static(val resId: Int) : MyImage()
     data class Animated(val resId: Int) : MyImage()
 }
+
 
 @Composable
 fun GaleryPage( navController: NavController){
@@ -119,93 +125,93 @@ fun GaleryPage( navController: NavController){
         Modifier
             .fillMaxSize(), color = backgroundColor
     ) {
-        Column(Modifier.padding(top = 10.dp),) {
-            Surface ( color = Color(0xFF31343c), modifier = Modifier
-                .clip(RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp)),
-            ) {
-               Box(Modifier.clickable {
-                   showDialog = true
-               }) {
-                   Row {
-                       Image(painter = logout, contentDescription = null,
-                           Modifier.padding(start = 10.dp, top = 10.dp),
-                           colorFilter = ColorFilter.tint(Color.White) )
-                       Text(text = "Log Out",
-                           Modifier.padding(top = 10.dp, bottom = 10.dp, end = 10.dp, start = 5.dp),
-                           color = Color.White,
-                       )
-                   }
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+            Column(Modifier.padding(top = 10.dp)) {
+                Surface ( color = Color(0xFF31343c), modifier = Modifier
+                    .clip(RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp)),
+                ) {
+                    Box(Modifier.clickable {
+                        showDialog = true
+                    }) {
+                        Row {
+                            Image(painter = logout, contentDescription = null,
+                                Modifier.padding(start = 10.dp, top = 10.dp),
+                                colorFilter = ColorFilter.tint(Color.White) )
+                            Text(text = "Log Out",
+                                Modifier.padding(top = 10.dp, bottom = 10.dp, end = 10.dp, start = 5.dp),
+                                color = Color.White,
+                            )
+                        }
 
-               }
+                    }
+                }
             }
-        }
 
-        Column (Modifier.padding(start = 40.dp, end = 40.dp, top = 60.dp )) {
+            Column (Modifier.padding(start = 40.dp, end = 40.dp, top = 60.dp )) {
 
-            when (currentImage) {
-                is MyImage.Static -> {
-                    val painter = painterResource(id = currentImage.resId)
-                    Image(
-                        painter = painter,
-                        contentDescription = null,
+                when (currentImage) {
+                    is MyImage.Static -> {
+                        val painter = painterResource(id = currentImage.resId)
+                        Image(
+                            painter = painter,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .height(400.dp)
+                                .clip(RoundedCornerShape(topEnd = 15.dp, topStart = 15.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                    is MyImage.Animated -> {
+                        Image(
+                            painter = rememberAsyncImagePainter(R.drawable.sun, imageLoader),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .height(400.dp)
+                                .clip(RoundedCornerShape(topEnd = 15.dp, topStart = 15.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+                Surface ( color = Color(0xFF31343c), modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 0.dp)
+                    .clip(RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp)),
+                ) {
+                    Text(
+                        text =currentDescription,
+                        color = Color.White,
                         modifier = Modifier
-                            .width(400.dp)
-                            .height(400.dp)
-                            .clip(RoundedCornerShape(topEnd = 15.dp, topStart = 15.dp)),
-                        contentScale = ContentScale.Crop
+                            .padding(10.dp)
+                            .then(Modifier.graphicsLayer(scaleX = 0.8f, scaleY = 0.8f))
                     )
                 }
-                is MyImage.Animated -> {
-                    Image(
-                        painter = rememberAsyncImagePainter(R.drawable.sun, imageLoader),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .width(400.dp)
-                            .height(400.dp)
-                            .clip(RoundedCornerShape(topEnd = 15.dp, topStart = 15.dp)),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-            }
-            Surface ( color = Color(0xFF31343c), modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 0.dp)
-                .clip(RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp)),
-            ) {
-                Text(
-                    text =currentDescription,
-                    color = Color.White,
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .then(Modifier.graphicsLayer(scaleX = 0.8f, scaleY = 0.8f))
-                )
-            }
-            Row (Modifier.padding(10.dp)){
-                Button(onClick = {
-                    if (currentIndex > 0) {
-                        currentIndex--
+                Row (Modifier.padding(10.dp).fillMaxWidth(), Arrangement.SpaceBetween){
+                    Button(onClick = {
+                        if (currentIndex > 0) {
+                            currentIndex--
+                        }
+                    },
+                        Modifier
+                            .width(150.dp)
+                            .padding(horizontal = 10.dp),
+                        border = null,
+                        shape = MaterialTheme.shapes.small,
+                    ) {
+                        Text(text = "Atras")
                     }
-                },
-                    Modifier
-                        .width(150.dp)
-                        .padding(horizontal = 20.dp),
-                    border = null,
-                    shape = MaterialTheme.shapes.small,
-                ) {
-                    Text(text = "Atras")
-                }
-                Button(onClick = {
-                    if (currentIndex < images.size - 1) {
-                        currentIndex++
+                    Button(onClick = {
+                        if (currentIndex < images.size - 1) {
+                            currentIndex++
+                        }
+                    },
+                        Modifier
+                            .width(150.dp)
+                            .padding(horizontal = 10.dp),
+                        border = null,
+                        shape = MaterialTheme.shapes.small,
+                    ) {
+                        Text(text = "Siguiente")
                     }
-                },
-                    Modifier
-                        .width(150.dp)
-                        .padding(horizontal = 20.dp),
-                    border = null,
-                    shape = MaterialTheme.shapes.small,
-                ) {
-                    Text(text = "Siguiente")
                 }
             }
         }
